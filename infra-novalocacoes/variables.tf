@@ -27,7 +27,7 @@ variable "ami_frontend" {
 variable "ami_backend" {
   description = "AMI personalizada para o servidor Backend"
   type        = string
-  default     = "ami-0c46f30533bdbdb15"
+  default     = "ami-0b2eca8907f641af4"
 }
 
 variable "ami_database" {

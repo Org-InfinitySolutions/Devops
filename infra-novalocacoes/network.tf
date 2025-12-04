@@ -48,7 +48,7 @@ resource "aws_eip" "nat_eip" {
 # Fica na subrede pública e serve a subrede privada
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.public
+  subnet_id     = aws_subnet.public.id
   tags = {
     Name = "novalocacoes-nat-gateway"
   }
@@ -60,7 +60,7 @@ resource "aws_nat_gateway" "nat" {
 # Tabela de Rota PÚBLICA (Web Server NGINX)
 resource "aws_route_table" "public_rtb" {
   vpc_id = aws_vpc.main.id
-  route = {
+  route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igw.id
   }
@@ -104,7 +104,7 @@ resource "aws_vpc_endpoint" "s3_endpoint" {
 
 # SG Para o Nginx (Load Balancer e Bastion Host)
 resource "aws_security_group" "nginx_sg" {
-  name        = "sg-nginx-public"
+  name        = "security-group-nginx-public"
   vpc_id      = aws_vpc.main.id
   description = "Permite HTTP, SSH e Painel RabbitMQ"
 
@@ -145,13 +145,13 @@ resource "aws_security_group" "nginx_sg" {
   }
 
   tags = {
-    Name = "sg-nginx-public"
+    Name = "security-group-nginx-public"
   }
 }
 
 # SG Para o frontend
 resource "aws_security_group" "frontend_sg" {
-  name        = "sg-frontend-private"
+  name        = "security-group-frontend-private"
   vpc_id      = aws_vpc.main.id
   description = "Acesso do Nginx (Porta 80) e SSH (via Nginx)"
 
@@ -182,7 +182,7 @@ resource "aws_security_group" "frontend_sg" {
 
 # SG para o backend
 resource "aws_security_group" "backend_sg" {
-  name        = "sg-backend-private"
+  name        = "security-group-backend-private"
   vpc_id      = aws_vpc.main.id
   description = "Acesso do Nginx (Porta 8082) e SSH (via Nginx)"
 
@@ -213,7 +213,7 @@ resource "aws_security_group" "backend_sg" {
 
 # SG para o Banco (MySQL)
 resource "aws_security_group" "database_sg" {
-  name        = "sg-database-private"
+  name        = "security-group-database-private"
   vpc_id      = aws_vpc.main.id
   description = "Acesso do Backend (Porta 3306) e SSH (via Nginx)"
 
@@ -244,7 +244,7 @@ resource "aws_security_group" "database_sg" {
 
 # SG para o RabbitMQ
 resource "aws_security_group" "rabbitmq_sg" {
-  name        = "sg-rabbitmq-private"
+  name        = "security-group-rabbitmq-private"
   vpc_id      = aws_vpc.main.id
   description = "Acesso do Backend (5672) e Nginx (15672 e 22)"
 
